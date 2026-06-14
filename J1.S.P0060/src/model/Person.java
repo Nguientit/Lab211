@@ -25,8 +25,8 @@ public class Person {
     
     public int calcTotal(int[] bills){
         int total = 0;
-        for(int bill : bills){
-            total += bill;
+        for(int i = 0; i < bills.length; i++){
+            total += bills[i];
         }
         return total;
     }

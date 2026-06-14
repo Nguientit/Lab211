@@ -6,6 +6,7 @@ package controller;
 
 import model.Circle;
 import model.Rectangle;
+import model.Shape;
 import model.Triangle;
 import utils.DataInput;
 
@@ -23,7 +24,7 @@ public class Controller {
      * Hàm private xử lý logic nhập liệu và kiểm tra cấu trúc hình học cho riêng đối tượng Tam giác.
      * Trả về một đối tượng Triangle hoàn chỉnh sau khi thu thập đủ dữ liệu sạch.
      */
-    private void inputTriangle(Triangle triangle){
+    private Triangle inputTriangle(){
         double a = 0, b= 0, c = 0;
         boolean isValidTriangle = false;
         
@@ -42,23 +43,20 @@ public class Controller {
         }while(!isValidTriangle);
         // Thoát khỏi vòng lặp an toàn, gọi từ khóa new để trả về một đối tượng Triangle mới
         
-        triangle.setSideA(a);
-        triangle.setSideB(b);
-        triangle.setSideC(c);
+        return new Triangle(a, b, c);
     }
     
-    private void inputCircle(Circle circle){
+    private Circle inputCircle(){
         // Gọi hàm tiện ích quét dữ liệu bán kính
         double radius = DataInput.checkInputDouble("Please input radius of Circle: ", Double.MIN_VALUE, Double.MAX_VALUE);
         // Trả về một đối tượng Circle mới được khởi tạo trên bộ nhớ Heap
-        circle.setRadius(radius);
+        return new Circle(radius);
     }
     
-    private void inputRectangle(Rectangle rectangle){
+    private Rectangle inputRectangle(){
         double width = DataInput.checkInputDouble("Please input width of Rectangle: ", Double.MIN_VALUE, Double.MAX_VALUE);
         double length = DataInput.checkInputDouble("Please input length of Rectangle: ", Double.MIN_VALUE, Double.MAX_VALUE);
-        rectangle.setWidth(width);
-        rectangle.setLength(length);
+        return new Rectangle(width, length);
     }
     
     /**
@@ -69,18 +67,14 @@ public class Controller {
         System.out.println("=====Calculator Shape Program=====");
         
         //Gọi các hàm nhập liệu để thu thập và đóng gói dữ liệu vào các thực thể tương ứng
-        Rectangle rectangle = new Rectangle(0, 0);
-        Circle circle =  new Circle(0);
-        Triangle triangle = new Triangle(0, 0, 0);
-        
-        inputRectangle(rectangle);
-        inputCircle(circle);
-        inputTriangle(triangle);
+        Shape shape = new Rectangle(0, 0);
+        Shape circle =  new Circle(0);
+        Shape triangle = new Triangle(0, 0, 0);
        
         System.out.println();
         
         //Gọi phương thức in kết quả của từng thực thế để thực hiện tính toán
-        rectangle.printResult();
+        shape.printResult();
         circle.printResult();
         triangle.printResult();
     }
