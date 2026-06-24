@@ -55,8 +55,8 @@ public class Controller {
     }
 
     private void createFruit() {
-        String choose;
-        do {
+        boolean choose = false;
+        while (!choose) {
             System.out.println("\n-------- Create Product --------");
             String id = Validator.getString("Enter Fruit ID: ", "Invalid ID Format!", "[A-Za-z0-9\\s]+").toUpperCase();
 
@@ -83,38 +83,16 @@ public class Controller {
                 System.out.println("Fruit created successfully");
             }
 
-            choose = Validator.getString("Do you want to continue(Y/N)? ", "Please enter Y or N", "[YyNn]");
-        } while (choose.equalsIgnoreCase("Y"));
+            String choice = Validator.getString("Do you want to continue(Y/N)? ", "Please enter Y or N", "[YyNn]");
+            if (choice.equalsIgnoreCase("Y")) {
+                choose = true;
+            }
+        }
         displayFruitStock();
     }
 
     private void viewOrder() {
-        if (orders.isEmpty()) {
-            System.out.println("No order available");
-            return;
-        }
-        for (int i = 0; i < orders.size(); i++) {
-            Order order = orders.get(i);
-            System.out.println("\nCustomer: " + order.getCustomerName());
-            System.out.printf("%-5s | %-10s | %-10s | %-8s | %-8s\n",
-                    "No.", "Product", "Quantity", "Price", "Amount");
 
-            double totalOrderAmount = 0;
-            List<Fruit> buyItems = order.getBuyItems();
-
-            for (int j = 0; j < buyItems.size(); j++) {
-                Fruit items = buyItems.get(j);
-                double amount = items.getQuantity() * items.getPrice();
-                totalOrderAmount += amount;
-                System.out.printf("%-5d   %-10s   %-10d   %2.0f$   %6.0f$\n",
-                        (j + 1),
-                        items.getName(), 
-                        items.getQuantity(),
-                        items.getPrice(),
-                        amount);
-            }
-            System.out.println("Total: " + (int) totalOrderAmount + "$");
-        }
     }
 
     private void shopping() {
@@ -127,66 +105,36 @@ public class Controller {
         }
 
         if (!hasStock) {
-            System.out.println("Shop is out of stock!");
+            System.out.println("Shop is out of stock");
             return;
         }
 
         List<Fruit> cart = new ArrayList<>();
-        boolean isFinish = false;
 
+        boolean isFinish = false;
         while (!isFinish) {
             displayFruitStock();
-            int item = Validator.getInt("Select item to buy: ", "Invalid item number", 1, fruits.size());
-            Fruit selectedFruits = fruits.get(item - 1);
+            int item = Validator.getInt("Select item to buy:", "Invalid item number", 1, fruits.size());
+            Fruit selectedFruit = fruits.get(item - 1);
 
-            if (selectedFruits.getQuantity() == 0) {
+            if (selectedFruit.getQuantity() == 0) {
                 System.out.println("Fruits is out of stock!");
             } else {
-                System.out.println("You selected: " + selectedFruits.getName());
-                int quantityBuy = Validator.getInt("Please input quantity: ", "Invalid Quantity must between 1 and " + selectedFruits.getQuantity() + "!", 1, selectedFruits.getQuantity());
-                selectedFruits.setQuantity(selectedFruits.getQuantity() - quantityBuy);
-
+                System.out.println("You selected: " + selectedFruit.getName());
+                int quantityBuy = Validator.getInt("Please input quantity: ",
+                        "Invalid quantity between 1 and " + selectedFruit.getQuantity() + "!", 1, selectedFruit.getQuantity());
+                selectedFruit.setQuantity(selectedFruit.getQuantity() - quantityBuy);
+                
                 Fruit fruitInCart = null;
                 for (int i = 0; i < cart.size(); i++) {
                     Fruit f = cart.get(i);
-                    if (f.getId().equalsIgnoreCase(selectedFruits.getId())) {
+                    if (f.getId().equalsIgnoreCase(selectedFruit.getId())) {
                         fruitInCart = f;
                         break;
                     }
                 }
-
-                if (fruitInCart != null) {
-                    fruitInCart.setQuantity(fruitInCart.getQuantity() + quantityBuy);
-                } else {
-                    cart.add(new Fruit(selectedFruits.getId(), selectedFruits.getName(), selectedFruits.getPrice(), quantityBuy, selectedFruits.getOrigin()));
-                }
-                String orderChoice = Validator.getString("Do you want order now (Y/N): ", "Please enter Y or N", "[YyNn]");
-                if (orderChoice.equalsIgnoreCase("Y")) {
-                    isFinish = true;
-                }
             }
         }
-
-        System.out.printf("%-10s | %-10s | %-8s | %-8s\n", "Product", "Quantity", "Price", "Amount");
-
-        double finalTotal = 0;
-        for (int i = 0; i < cart.size(); i++) {
-            Fruit f = cart.get(i);
-            double amount = f.getQuantity() * f.getPrice();
-            finalTotal += amount;
-
-            System.out.printf("%-10s   %-10d   %2.0f$   %6.0f$\n",
-                    f.getName(),
-                    f.getQuantity(),
-                    f.getPrice(),
-                    amount);
-        }
-
-        System.out.println("Total: " + finalTotal);
-
-        String customerName = Validator.getString("Input your name: ", "Invalid name format!", "[A-Za-z\\s]+");
-        orders.add(new Order(customerName, cart));
-        System.out.println("Order completed success");
     }
 
     private void displayFruitStock() {
@@ -202,8 +150,10 @@ public class Controller {
                         f.getName(),
                         f.getOrigin(),
                         f.getPrice());
+            } else {
+                System.out.println("List of Fruit is empty!");
+                return;
             }
         }
     }
-
 }
