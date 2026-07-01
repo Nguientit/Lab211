@@ -63,12 +63,10 @@ public class Controller {
                     break;
             }
         }
-        System.out.println("Application closed. Goodbye!");
     }
 
     public void createStudent() {
         boolean isFinished = false;
-
         while (!isFinished) {
             System.out.println("\n--- Create Student ---");
             String id = Validator.getString("Enter Student ID: ", "Invalid ID Format!", "[A-Za-z0-9]+").toUpperCase();
